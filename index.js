@@ -1,28 +1,41 @@
-import express from 'express';
-import { ApiKeyManager } from '@esri/arcgis-rest-request';
-import { geocode } from '@esri/arcgis-rest-geocoding';
-import bodyParser from 'body-parser';
+const express = require('express');
+const { ApiKeyManager } = require('@esri/arcgis-rest-request');
+const {getGeolocation} = require('./helper');
+require('dotenv').config()
+
+
+// import {bodyParser} from 'body-parser';
 
 const app = express();
 
 const PORT = 3000;
 
+const apiKey = process.env.APIKEY;
 
-const apiKey = "AAPT3NKHt6i2urmWtqOuugvr9YNn4lOFkTuR9b6n-OMbeSUQZEwmGbx7voV1JKXPY4OV2WmH0St9QVVz0wPIHSAOXU5XgrLMgF7BOL2U6jVtM0Yw-HQmabb0CpdvcpEADFH79E9Bx2EbOmpa3T4FegduHUNnuivaLa9jzjEDktThAI8inLvU9ICs0nAnvMMRcHjuBpSCg9MuLcCDEnUwa6pbV_HsL4PS2AIlgMm0QjpndtM.";
+console.log(apiKey);
+const auth = ApiKeyManager.fromKey(apiKey);
 
-const authentication = ApiKeyManager.fromKey(apiKey);
-
-geocode({
-    address: "7405 Goreway Drive Missisauga",
-    postal: "L4T 0A3",
+const address = {
+    address: '1 Goreway Drive',
+    postal: "LP0 0AT",
     countryCode: "Canada",
-    authentication    
-}).then((response)=>{
-    console.log(response.candidates);
-})
+}
 
-app.get('/',(req,res)=>{
-    res.send('Server is up!');
+getGeolocation( apiKey, address)
+.then((response)=>{
+    console.log(response)
+})
+.catch((error)=>{
+    console.log(error.message)
+}
+
+);
+
+
+app.get('/', async (req,res)=>{
+// console.log(getGeolocation);?
+
+    res.send("Server is up!!");
 })
 
 
